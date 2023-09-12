@@ -1,46 +1,44 @@
 #include "search_algos.h"
+#include <math.h>
 
 /**
- * linear_skip - Searches for an algorithm in a sorted singly
- *               linked list of integers using linear skip.
- * @list: A pointer to the  head of the linked list to search.
- * @value: The value to search for.
+ * jump_search - searches for a value in an array of
+ * integers using the Jump search algorithm
  *
- * Return: If the value is not present or the head of the list is NULL, NULL.
- *         Otherwise, a pointer to the first node where the value is located.
- *
- * Description: Prints a value every time it is compared in the list.
- *              Uses the square root of the list size as the jump step.
+ * @array: input array
+ * @size: size of the array
+ * @value: value to search in
+ * Return: index of the number
  */
-skiplist_t *linear_skip(skiplist_t *list, int value)
+int jump_search(int *array, size_t size, int value)
 {
-	skiplist_t *node, *jump;
+	int index, m, k, prev;
 
-	if (list == NULL)
-		return (NULL);
+	if (array == NULL || size == 0)
+		return (-1);
 
-	for (node = jump = list; jump->next != NULL && jump->n < value;)
+	m = (int)sqrt((double)size);
+	k = 0;
+	prev = index = 0;
+
+	do {
+		printf("Value checked array[%d] = [%d]\n", index, array[index]);
+
+		if (array[index] == value)
+			return (index);
+		k++;
+		prev = index;
+		index = k * m;
+	} while (index < (int)size && array[index] < value);
+
+	printf("Value found between indexes [%d] and [%d]\n", prev, index);
+
+	for (; prev <= index && prev < (int)size; prev++)
 	{
-		node = jump;
-		if (jump->express != NULL)
-		{
-			jump = jump->express;
-			printf("Value checked at index [%ld] = [%d]\n",
-				jump->index, jump->n);
-		}
-		else
-		{
-			while (jump->next != NULL)
-				jump = jump->next;
-		}
+		printf("Value checked array[%d] = [%d]\n", prev, array[prev]);
+		if (array[prev] == value)
+			return (prev);
 	}
 
-	printf("Value found between indexes [%ld] and [%ld]\n",
-			node->index, jump->index);
-
-	for (; node->index < jump->index && node->n < value; node = node->next)
-		printf("Value checked at index [%ld] = [%d]\n", node->index, node->n);
-	printf("Value checked at index [%ld] = [%d]\n", node->index, node->n);
-
-	return (node->n == value ? node : NULL);
+	return (-1);
 }
